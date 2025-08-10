@@ -34,11 +34,11 @@ This repository contains the backend server for the Hostel Allotment System. It 
 
 1.  Clone the repository:
     ```bash
-    git clone [https://github.com/your-username/hostel-allotment-backend.git](https://github.com/your-username/hostel-allotment-backend.git)
+    git clone https://github.com/Abhi-1803-6/Hostel-Allotment-Backend.git
     ```
 2.  Navigate to the project directory:
     ```bash
-    cd hostel-allotment-backend
+    cd Hostel-Allotment-Backend
     ```
 3.  Install dependencies:
     ```bash
