@@ -10,13 +10,23 @@ dotenv.config();
 
 // Initialize Express app and create an HTTP server
 const app = express();
-app.use(cors());
+const allowedOrigins = ['https://hostel-allotment-frontend-22bcs004.vercel.app/']; 
+const corsOptions = {
+    origin: (origin, callback) => {
+        if (allowedOrigins.includes(origin) || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+};
+app.use(cors(corsOptions));
 const server = http.createServer(app);
 
 // Attach Socket.IO to the HTTP server
 const io = new Server(server, {
   cors: {
-    origin: "*", // In production, restrict this to your front-end's URL
+    origin: allowedOrigins, // In production,i have now restricted this to my front-end's URL
     methods: ["GET", "POST"]
   }
 });
