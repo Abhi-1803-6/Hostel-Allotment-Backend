@@ -10,7 +10,7 @@ dotenv.config();
 
 // Initialize Express app and create an HTTP server
 const app = express();
-const allowedOrigins = ['https://hostel-allotment-frontend-22bcs004.vercel.app/']; 
+const allowedOrigins = ['https://hostel-allotment-frontend-22bcs004.vercel.app']; 
 const corsOptions = {
     origin: (origin, callback) => {
       // --- Start of Debug Block ---
