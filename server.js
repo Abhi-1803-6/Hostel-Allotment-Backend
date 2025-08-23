@@ -13,6 +13,11 @@ const app = express();
 const allowedOrigins = ['https://hostel-allotment-frontend-22bcs004.vercel.app/']; 
 const corsOptions = {
     origin: (origin, callback) => {
+      // --- Start of Debug Block ---
+        console.log("\n--- CORS CHECK ---");
+        console.log("Request Origin Header:", origin);
+        console.log("Allowed Origins List:", allowedOrigins);
+        // --- End of Debug Block ---
         if (allowedOrigins.includes(origin) || !origin) {
             callback(null, true);
         } else {
