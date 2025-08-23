@@ -140,7 +140,15 @@ exports.cancelAllotment = async (req, res) => {
         res.status(500).json({ message: 'A server error occurred while cancelling the allotment.' });
     }
 };
-
+exports.resetAllotmentProcess = () => {
+    console.log('[RESET] Resetting live allotment state.');
+    clearTimeout(currentTurnTimeout);
+    allotmentQueue = [];
+    allotmentInProgress = false;
+    currentTurnTimeout = null;
+    currentTurnGroup = null;
+    currentTurnDeadline = null;
+};
 
 exports.selectRoom = async (req, res) => {
     console.log('\n[SELECT_ROOM] Received a room selection request.');

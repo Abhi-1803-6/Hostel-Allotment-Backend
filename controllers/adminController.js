@@ -2,6 +2,9 @@ const Group = require('../models/groupModel');
 const Room = require('../models/roomModel');
 const RankList = require('../models/rankListModel');
 const Admin = require('../models/adminModel');
+const { resetAllotmentProcess } = require('./allotmentController');
+const Student = require('../models/studentModel');
+
 const jwt = require('jsonwebtoken');
 // Helper function to generate a token
 const generateToken = (id) => {
@@ -104,5 +107,25 @@ exports.lockAllGroups = async (req, res) => {
         res.json({ message: `${modifiedCount} group(s) have been locked for allotment.` });
     } catch (error) {
         res.status(500).json({ message: 'Server Error', error: error.message });
+    }
+};
+exports.resetAllotmentState = async (req, res) => {
+    try {
+        // 1. Stop any running allotment process
+        resetAllotmentProcess();
+        
+        // 2. Make all rooms available again
+        await Room.updateMany({}, { $set: { isAvailable: true } });
+
+        // 3. Reset all groups (unlock them and remove allotted rooms)
+        await Group.updateMany({}, { $set: { allottedRoom: null, isFinalized: false } });
+
+        // 4. Reset all students' allotment status
+        await Student.updateMany({}, { $set: { allotmentStatus: 'Not Allotted' } });
+
+        res.json({ message: 'The demo state has been reset successfully.' });
+    } catch (error) {
+        console.error('Error resetting allotment state:', error);
+        res.status(500).json({ message: 'Server Error while resetting state.' });
     }
 };
