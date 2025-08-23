@@ -88,6 +88,46 @@ const loginStudent = async (req, res) => {
     res.status(500).json({ message: 'Server Error', error: error.message });
   }
 };
+exports.debugLogin = async (req, res) => {
+    const { rollNumber, password } = req.body;
+    console.log('\n--- STARTING DEBUG LOGIN ---');
+    
+    try {
+        console.log(`[DEBUG] 1. Received request for roll number: ${rollNumber}`);
+        
+        const student = await Student.findOne({ rollNumber });
+        if (!student) {
+            console.log('[DEBUG] 2. Student not found in database.');
+            return res.status(404).json({ message: 'Student not found.' });
+        }
+
+        console.log(`[DEBUG] 2. Student found: ${student.name}`);
+        console.log(`[DEBUG] 3. Stored password hash is: ${student.password}`);
+        console.log(`[DEBUG] 4. Now attempting to compare password...`);
+
+        // This is the critical test
+        const isMatch = await student.matchPassword(password);
+        
+        console.log(`[DEBUG] 5. bcrypt.compare result is: ${isMatch}`);
+
+        if (isMatch) {
+            console.log('[DEBUG] 6. Passwords MATCH. Login successful.');
+            res.json({
+                _id: student._id,
+                name: student.name,
+                token: generateToken(student._id),
+            });
+        } else {
+            console.log('[DEBUG] 6. Passwords DO NOT MATCH. Login failed.');
+            res.status(401).json({ message: 'Passwords do not match.' });
+        }
+        console.log('--- DEBUG LOGIN FINISHED ---');
+
+    } catch (error) {
+        console.error('[DEBUG] CRITICAL ERROR during debug login:', error);
+        res.status(500).json({ message: 'A server error occurred during the login process.' });
+    }
+};
 
 module.exports = {
   registerStudent,
