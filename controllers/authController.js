@@ -88,7 +88,7 @@ const loginStudent = async (req, res) => {
     res.status(500).json({ message: 'Server Error', error: error.message });
   }
 };
-exports.debugLogin = async (req, res) => {
+const debugLogin = async (req, res) => {
     const { rollNumber, password } = req.body;
     console.log('\n--- STARTING DEBUG LOGIN ---');
     
@@ -132,4 +132,5 @@ exports.debugLogin = async (req, res) => {
 module.exports = {
   registerStudent,
   loginStudent,
+  debugLogin,
 };
