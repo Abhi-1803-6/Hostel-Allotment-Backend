@@ -4,6 +4,7 @@ const RankList = require('../models/rankListModel');
 const Admin = require('../models/adminModel');
 const { resetAllotmentProcess } = require('./allotmentController');
 const Student = require('../models/studentModel');
+const Invitation = require('../models/invitationModel');
 
 const jwt = require('jsonwebtoken');
 // Helper function to generate a token
@@ -84,12 +85,35 @@ exports.uploadRanks = async (req, res) => {
   }
 
   try {
-    // Clear existing rank list before uploading a new one
-    await RankList.deleteMany({}); 
-    // Insert the new list
+    console.log("--- Starting Full System Reset for New Rank List ---");
+
+    // 1. Stop any currently running allotment process
+    resetAllotmentProcess();
+    console.log("Stopped any active allotment process.");
+
+    // 2. Delete all existing groups
+    await Group.deleteMany({});
+    console.log("All existing groups deleted.");
+
+    // 3. Delete all existing invitations
+    await Invitation.deleteMany({});
+    console.log("All existing invitations deleted.");
+
+    // 4. Delete all existing student accounts
+    await Student.deleteMany({});
+    console.log("All existing student accounts deleted.");
+
+    // 5. Clear the old rank list
+    await RankList.deleteMany({});
+    console.log("Old rank list cleared.");
+    
+    // 6. Insert the new rank list
     const newRankList = await RankList.insertMany(ranks);
-    res.status(201).json({ message: `${newRankList.length} ranks have been uploaded successfully.` });
+    console.log("New rank list uploaded.");
+
+    res.status(201).json({ message: `System reset and ${newRankList.length} ranks have been uploaded successfully.` });
   } catch (error) {
+    console.error("Error during rank list upload and system reset:", error);
     res.status(500).json({ message: 'Server Error', error: error.message });
   }
 };
